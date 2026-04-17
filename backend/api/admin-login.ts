@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
+import { setCorsHeaders, handleCorsPreFlight } from '../lib/cors';
 
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
@@ -11,6 +12,14 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  // Handle CORS preflight
+  if (handleCorsPreFlight(req, res)) {
+    return res;
+  }
+
+  // Add CORS headers to all responses
+  setCorsHeaders(res);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

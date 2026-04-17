@@ -2,6 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { setCorsHeaders, handleCorsPreFlight } from '../lib/cors';
 
 interface LoginRequest {
   license_key: string;
@@ -77,6 +78,14 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ): Promise<VercelResponse> {
+  // Handle CORS preflight
+  if (handleCorsPreFlight(req, res)) {
+    return res;
+  }
+
+  // Add CORS headers to all responses
+  setCorsHeaders(res);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

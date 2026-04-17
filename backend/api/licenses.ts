@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { verifyJWT } from '../lib/auth';
+import { setCorsHeaders, handleCorsPreFlight } from '../lib/cors';
 import crypto from 'crypto';
 
 const supabase = createClient(
@@ -128,6 +129,14 @@ export default function handler(
   req: VercelRequest,
   res: VercelResponse
 ): Promise<VercelResponse> | VercelResponse {
+  // Handle CORS preflight
+  if (handleCorsPreFlight(req, res)) {
+    return res;
+  }
+
+  // Add CORS headers to all responses
+  setCorsHeaders(res);
+
   const { query } = req;
   const method = req.method || 'GET';
 
