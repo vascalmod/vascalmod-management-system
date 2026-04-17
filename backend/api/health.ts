@@ -18,6 +18,10 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Debug: Log environment variables
+  console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'NOT SET');
+  console.log('SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? 'SET' : 'NOT SET');
+
   try {
     // Test Supabase connection
     const { data: testData, error: testError } = await supabase
@@ -29,6 +33,11 @@ export default async function handler(
         status: 'unhealthy',
         error: 'Database connection failed',
         timestamp: new Date().toISOString(),
+        debug: {
+          supabaseUrlSet: !!process.env.SUPABASE_URL,
+          supabaseKeySet: !!process.env.SUPABASE_SERVICE_KEY,
+          errorMessage: testError.message,
+        }
       });
     }
 
