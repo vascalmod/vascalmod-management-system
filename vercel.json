@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "installCommand": "npm install && npm install -w frontend && npm install -w backend",
+  "installCommand": "npm install",
   "env": {
     "NODE_ENV": "production"
   },
