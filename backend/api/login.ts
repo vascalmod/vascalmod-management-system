@@ -200,9 +200,15 @@ export default async function handler(
     }
   } catch (error) {
     console.error('Login error:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
+      debug: process.env.NODE_ENV === 'development' ? {
+        errorMessage,
+        errorType: error instanceof Error ? error.name : typeof error,
+        stack: error instanceof Error ? error.stack : undefined,
+      } : undefined,
     });
-  }
+  }   
 }
