@@ -29,6 +29,7 @@ export default async function handler(
       .select('count(*)', { count: 'exact', head: true });
 
     if (testError) {
+      console.error('Supabase error:', testError);
       return res.status(503).json({
         status: 'unhealthy',
         error: 'Database connection failed',
@@ -37,6 +38,9 @@ export default async function handler(
           supabaseUrlSet: !!process.env.SUPABASE_URL,
           supabaseKeySet: !!process.env.SUPABASE_SERVICE_KEY,
           errorMessage: testError.message,
+          errorCode: testError.code,
+          errorDetails: testError.details,
+          errorHint: testError.hint,
         }
       });
     }
