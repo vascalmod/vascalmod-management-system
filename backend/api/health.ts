@@ -23,13 +23,17 @@ export default async function handler(
   console.log('SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? 'SET' : 'NOT SET');
 
   try {
-    // Test Supabase connection
-    const { data: testData, error: testError } = await supabase
+    // Test Supabase connection with a simpler query
+    const { data: testData, error: testError, status } = await supabase
       .from('licenses')
-      .select('count(*)', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true });
+
+    console.log('Query status:', status);
+    console.log('Query error:', JSON.stringify(testError));
+    console.log('Query data:', testData);
 
     if (testError) {
-      console.error('Supabase error:', testError);
+      console.error('Full Supabase error:', testError);
       return res.status(503).json({
         status: 'unhealthy',
         error: 'Database connection failed',
@@ -37,10 +41,12 @@ export default async function handler(
         debug: {
           supabaseUrlSet: !!process.env.SUPABASE_URL,
           supabaseKeySet: !!process.env.SUPABASE_SERVICE_KEY,
-          errorMessage: testError.message,
-          errorCode: testError.code,
-          errorDetails: testError.details,
-          errorHint: testError.hint,
+          errorMessage: testError.message || 'Unknown error',
+          errorCode: testError.code || 'NO_CODE',
+          errorDetails: testError.details || 'No details',
+          errorHint: testError.hint || 'No hint',
+          fullError: JSON.stringify(testError),
+          queryStatus: status,
         }
       });
     }
