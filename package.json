@@ -1,0 +1,18 @@
+{
+  "name": "license-management-system",
+  "version": "1.0.0",
+  "description": "Production-ready License Management System",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "install-all": "npm install && npm install -w backend && npm install -w frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
